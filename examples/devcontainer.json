@@ -1,0 +1,10 @@
+{
+  "name": "Offline code-server",
+  "image": "localhost:5000/offline/code-server:1.0.0",
+  "forwardPorts": [8080],
+  "remoteUser": "devcontainer",
+  "features": {},
+  "containerEnv": {
+    "CODE_SERVER_AUTH": "none"
+  }
+}

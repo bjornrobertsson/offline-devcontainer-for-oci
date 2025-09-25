@@ -1,0 +1,39 @@
+# Offline code-server image (expects artifact in ./artifacts)
+FROM ubuntu:22.04
+
+ARG CODE_SERVER_VERSION=4.22.1
+ARG USERNAME=devcontainer
+ARG USER_UID=1000
+ARG USER_GID=1000
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Minimal base tools
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    ca-certificates curl sudo bash \
+  && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user with passwordless sudo
+RUN groupadd --gid ${USER_GID} ${USERNAME} \
+  && useradd --uid ${USER_UID} --gid ${USER_GID} -m -s /bin/bash ${USERNAME} \
+  && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
+  && chmod 0440 /etc/sudoers.d/${USERNAME}
+
+# Provide code-server artifact (must exist in build context)
+# Example filename: code-server-4.22.1-linux-amd64.tar.gz
+COPY artifacts/code-server-${CODE_SERVER_VERSION}-linux-amd64.tar.gz /tmp/
+
+# Install code-server from local artifact
+RUN cd /tmp \
+  && tar -xzf code-server-${CODE_SERVER_VERSION}-linux-amd64.tar.gz \
+  && mv code-server-${CODE_SERVER_VERSION}-linux-amd64/bin/code-server /usr/local/bin/ \
+  && mv code-server-${CODE_SERVER_VERSION}-linux-amd64/lib/vscode /usr/local/lib/ \
+  && rm -rf /tmp/code-server-*
+
+# Simple entrypoint wrapper
+RUN printf '#!/usr/bin/env bash\nset -e\nexec code-server --auth ${CODE_SERVER_AUTH:-password} --bind-addr 0.0.0.0:${CODE_SERVER_PORT:-8080} --disable-telemetry --disable-update-check /home/%s\n' "$USERNAME" > /usr/local/bin/code-server-entrypoint \
+  && chmod +x /usr/local/bin/code-server-entrypoint
+
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}
+EXPOSE 8080
+CMD ["/usr/local/bin/code-server-entrypoint"]
