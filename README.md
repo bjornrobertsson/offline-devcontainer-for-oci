@@ -54,4 +54,4 @@ docker compose up -d
   - https://github.com/bjornrobertsson/offline-dockerfiles
 
 ## Rationale
-Saab’s question referenced `coder/devcontainer-features` code-server feature; that path is optional and introduces feature-level dependencies. This repo demonstrates a simpler path: build an image with code-server directly, push it to a local OCI registry, and consume it in `devcontainer.json` without any features or `dependsOn`.
+This repo demonstrates a simpler path: build an image with code-server directly, push it to a local OCI registry, and consume it in `devcontainer.json` without any features or `dependsOn`.
