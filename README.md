@@ -47,6 +47,22 @@ docker compose up -d
 }
 ```
 
+## Self-contained code-server Feature (no dependsOn)
+A local Feature is provided at `src/code-server` modeled after the upstream feature but without `dependsOn` and with a hardened `install.sh` that does not require zsh or common-utils and resolves the target user automatically.
+
+Structure:
+- `src/code-server/devcontainer-feature.json`
+- `src/code-server/install.sh`
+
+Usage options:
+- Use the feature via the Dev Container CLI (online):
+  - `devcontainer features build --features src/code-server` and publish to your registry of choice.
+- Or include this folder in your base image and run the install script during image build.
+
+Notes:
+- The install script supports an optional `localTarball` option to install from a pre-staged tar.gz for offline builds; otherwise it falls back to the official installer.
+- No `dependsOn` is declared; minimal packages (curl, ca-certificates, sudo) are installed inline when needed.
+
 ## Notes
 - This approach is offline at runtime; artifacts are acquired at build time
 - For fully air-gapped builds, pre-stage the tarball into `artifacts/` and build where Docker can access it without internet

@@ -1,0 +1,59 @@
+{
+    "name": "code-server (Self-contained)",
+    "id": "code-server",
+    "version": "1.0.0-oci.0",
+    "description": "VS Code in the browser (code-server) with no dependsOn; installs minimal prerequisites itself.",
+    "options": {
+        "absProxyBasePath": { "type": "string", "default": "", "description": "Base path for absproxy." },
+        "appName": { "type": "string", "default": "", "description": "Branding title." },
+        "auth": { "type": "string", "enum": ["password", "none"], "default": "password", "description": "Authentication mode." },
+        "cert": { "type": "string", "default": "", "description": "Path to certificate." },
+        "certHost": { "type": "string", "default": "", "description": "Hostname for self-signed cert." },
+        "certKey": { "type": "string", "default": "", "description": "Path to certificate key." },
+        "disableFileDownloads": { "type": "boolean", "default": false, "description": "Disable file downloads." },
+        "disableFileUploads": { "type": "boolean", "default": false, "description": "Disable file uploads." },
+        "disableGettingStartedOverride": { "type": "boolean", "default": false, "description": "Disable Coder override in Getting Started." },
+        "disableProxy": { "type": "boolean", "default": false, "description": "Disable domain/path proxy routes." },
+        "disableTelemetry": { "type": "boolean", "default": false, "description": "Disable telemetry." },
+        "disableUpdateCheck": { "type": "boolean", "default": false, "description": "Disable update checking." },
+        "disableWorkspaceTrust": { "type": "boolean", "default": false, "description": "Disable Workspace Trust." },
+        "enableProposedAPI": { "type": "string", "default": "", "description": "Comma-separated list of extension IDs to enable proposed API for." },
+        "extensions": { "type": "string", "default": "", "description": "Comma-separated extensions to install." },
+        "githubAuthTokenFile": { "type": "string", "default": "", "description": "Path to GitHub token file." },
+        "hashedPasswordFile": { "type": "string", "default": "", "description": "Path to argon2-hashed password file (takes precedence over passwordFile)." },
+        "host": { "type": "string", "default": "127.0.0.1", "description": "Bind address (use 0.0.0.0 for all)." },
+        "locale": { "type": "string", "default": "", "description": "IETF language tag for VS Code UI." },
+        "logFile": { "type": "string", "default": "/tmp/code-server.log", "description": "Log file path for code-server stdout/stderr." },
+        "passwordFile": { "type": "string", "default": "", "description": "Path to password file (when auth=password)." },
+        "port": { "type": "string", "default": "8080", "description": "Port to bind." },
+        "proxyDomain": { "type": "string", "default": "", "description": "Domain used for proxying ports." },
+        "socket": { "type": "string", "default": "", "description": "Unix socket path; host/port ignored when set." },
+        "socketMode": { "type": "string", "default": "", "description": "File mode of the socket." },
+        "trustedOrigins": { "type": "string", "default": "", "description": "CSV of trusted origins to disable origin check for." },
+        "verbose": { "type": "boolean", "default": false, "description": "Enable verbose logging." },
+        "version": { "type": "string", "default": "", "description": "code-server version. Empty = latest." },
+        "welcomeText": { "type": "string", "default": "", "description": "Welcome/login page text." },
+        "workspace": { "type": "string", "default": "", "description": "Workspace path to open (dir or .code-workspace)." },
+        "appOpenIn": { "type": "string", "default": "slim-window", "description": "Coder app open mode." },
+        "appShare": { "type": "string", "default": "owner", "description": "Coder share group." },
+        "appGroup": { "type": "string", "default": "Web Editors", "description": "Coder app group." },
+        "localTarball": { "type": "string", "default": "", "description": "Optional local tar.gz path for offline install (bypasses network)." },
+        "assetArch": { "type": "string", "default": "linux-amd64", "description": "Asset architecture when using GitHub releases." }
+    },
+    "customizations": {
+        "coder": {
+            "apps": [
+                {
+                    "slug": "code-server",
+                    "displayName": "code-server",
+                    "url": "http://${localEnv:FEATURE_CODE_SERVER_OPTION_HOST:127.0.0.1}:${localEnv:FEATURE_CODE_SERVER_OPTION_PORT:8080}/",
+                    "openIn": "${localEnv:FEATURE_CODE_SERVER_OPTION_APPOPENIN:slim-window}",
+                    "share": "${localEnv:FEATURE_CODE_SERVER_OPTION_APPSHARE:owner}",
+                    "icon": "/icon/code.svg",
+                    "group": "${localEnv:FEATURE_CODE_SERVER_OPTION_APPGROUP:Web Editors}"
+                }
+            ]
+        }
+    },
+    "entrypoint": "/usr/local/bin/code-server-entrypoint"
+}
