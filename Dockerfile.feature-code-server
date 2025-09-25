@@ -1,0 +1,7 @@
+# OCI Feature artifact for code-server (self-contained)
+# Copies feature files to image root as per containers.dev distribution
+FROM scratch
+COPY src/code-server/ /
+LABEL org.opencontainers.image.title="code-server (Self-contained) Feature"
+LABEL org.opencontainers.image.description="Dev Container Feature: code-server without dependsOn"
+LABEL dev.containers.metadata='{"id":"code-server","version":"1.0.0-oci.0","name":"code-server (Self-contained)"}'

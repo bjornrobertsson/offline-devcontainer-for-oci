@@ -63,6 +63,39 @@ Notes:
 - The install script supports an optional `localTarball` option to install from a pre-staged tar.gz for offline builds; otherwise it falls back to the official installer.
 - No `dependsOn` is declared; minimal packages (curl, ca-certificates, sudo) are installed inline when needed.
 
+## Publish as OCI Feature artifact
+You can distribute the self-contained feature as an OCI image.
+
+Build and push to a local registry:
+```bash
+# Optional: start local registry
+(cd docker/registry && docker compose up -d)
+
+# Build and push
+./scripts/build_feature_artifact.sh \
+  --image localhost:5000/features/code-server:1.0.0-oci.0
+```
+
+Consume in devcontainer.json:
+```json
+{
+  "image": "ubuntu:22.04",
+  "features": {
+    "localhost:5000/features/code-server:1.0.0-oci.0": {
+      "auth": "none",
+      "host": "0.0.0.0",
+      "port": "8080"
+    }
+  },
+  "forwardPorts": [8080]
+}
+```
+
+Notes:
+- The image contains devcontainer-feature.json and install.sh at layer root.
+- Label dev.containers.metadata is set for metadata discovery.
+- For fully offline usage, set the `localTarball` option to a pre-staged code-server tar.gz.
+
 ## Notes
 - This approach is offline at runtime; artifacts are acquired at build time
 - For fully air-gapped builds, pre-stage the tarball into `artifacts/` and build where Docker can access it without internet
